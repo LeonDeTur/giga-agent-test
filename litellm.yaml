@@ -1,0 +1,8 @@
+# LiteLLM-прокси перед локальным Infinity (эмбеддинги на CPU).
+# giga-agent (OpenAI-эмбеддинги через LangChain) шлёт номера токенов
+# cl100k_base; LiteLLM для не-OpenAI провайдеров декодирует их в текст.
+model_list:
+  - model_name: ru-en-rosberta
+    litellm_params:
+      model: infinity/ai-forever/ru-en-RoSBERTa
+      api_base: http://127.0.0.1:8103

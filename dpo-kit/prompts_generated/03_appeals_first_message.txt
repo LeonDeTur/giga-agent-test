@@ -1,0 +1,6 @@
+Используя MCP local_dpo_files, прочитай обращения,
+справочник объектов и контекст из C:\Projects\Studies\giga-agent-demo\dpo-kit\data\03_appeals\input.
+Сгруппируй обращения по возможным инцидентам.
+Для каждой группы перечисли ID и основание объединения.
+Неоднозначные случаи передай на проверку человеку.
+Создай C:\Projects\Studies\giga-agent-demo\dpo-kit\data\03_appeals\output/incidents.md и C:\Projects\Studies\giga-agent-demo\dpo-kit\data\03_appeals\output/manual_review.md.

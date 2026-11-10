@@ -1,0 +1,6 @@
+Через MCP local_dpo_files изучи протокол,
+отчёты исполнителей и реестр подтверждений в C:\Projects\Studies\giga-agent-demo\dpo-kit\data\02_assignments\input.
+Определи фактическое исполнение каждого поручения.
+Отдельно покажи просрочки, частичное исполнение
+и отсутствие доказательств.
+Создай C:\Projects\Studies\giga-agent-demo\dpo-kit\data\02_assignments\output/status_report.md и C:\Projects\Studies\giga-agent-demo\dpo-kit\data\02_assignments\output/questions.md.

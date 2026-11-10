@@ -1,0 +1,256 @@
+<title>Агенты GigaAgent для ДПО</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: одна колонка ~ 760px для текста, скриншоты в сетке 2 колонки, сворачиваются в одну на телефоне */
+:root {
+  --bg: #f6f7f5;
+  --surface: #ffffff;
+  --fg: #1d2421;
+  --muted: #5d6963;
+  --line: #dde2de;
+  --accent: #1f7a5a;
+  --accent-soft: #e3f1ea;
+  --warn: #9a5b00;
+  --warn-soft: #fbf0dc;
+  --bad: #a3332b;
+  --bad-soft: #f8e4e1;
+  --code-bg: #eef1ef;
+  --font-display: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141917; --surface: #1b211e; --fg: #e4ebe7; --muted: #9aa8a1; --line: #2d3632;
+    --accent: #5cc79c; --accent-soft: #1d3329; --warn: #e3b25c; --warn-soft: #33291a;
+    --bad: #ec8a80; --bad-soft: #3a2220; --code-bg: #232b27; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141917; --surface: #1b211e; --fg: #e4ebe7; --muted: #9aa8a1; --line: #2d3632;
+  --accent: #5cc79c; --accent-soft: #1d3329; --warn: #e3b25c; --warn-soft: #33291a;
+  --bad: #ec8a80; --bad-soft: #3a2220; --code-bg: #232b27; color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+.prose { max-width: 720px; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 42px); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 19px; font-weight: 700; }
+p { margin: 0; }
+section { display: flex; flex-direction: column; gap: 18px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 18px; color: var(--muted); max-width: 720px; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--font-mono); font-size: 12.5px; padding: 3px 10px; border-radius: 999px; background: var(--code-bg); color: var(--fg); border: 1px solid var(--line); }
+code { font-family: var(--font-mono); font-size: 0.88em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 15px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+tr:last-child td { border-bottom: none; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
+.ok { background: var(--accent-soft); color: var(--accent); }
+.mid { background: var(--warn-soft); color: var(--warn); }
+.no { background: var(--bad-soft); color: var(--bad); }
+.shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+figure { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+figure img { width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--line); display: block; }
+figcaption { font-size: 14px; color: var(--muted); }
+.agent { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 28px; align-items: start; padding-top: 28px; border-top: 1px solid var(--line); }
+.agent .text { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 15px; margin: 0; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; min-width: 0; }
+.fix { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 15px; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 13.5px; }
+.chain span.node { background: var(--surface); border: 1px solid var(--line); padding: 6px 10px; border-radius: 6px; }
+.chain span.arrow { color: var(--muted); }
+.answer { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+.answer.yes { border-color: var(--accent); }
+.verdict { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--accent); }
+ol.steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+.stack { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+@media (max-width: 760px) {
+  .shots, .agent { grid-template-columns: 1fr; }
+  body { padding-block: 24px 48px; }
+}
+</style>
+
+<div class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:14px">
+  <div class="eyebrow">Отчёт о проверке · 10 ноября 2026</div>
+  <h1>Агенты GigaAgent для ДПО</h1>
+  <p class="lede">Проверили, можно ли на GigaAgent собрать агентов для сценариев госуправления из постановки курса: три агента-проекта, только локальные и российские компоненты, без Docker.</p>
+  <div class="meta">
+    <span class="chip">LLM: GigaChat-3-Ultra</span>
+    <span class="chip">Эмбеддинги: ai-forever/ru-en-RoSBERTa на CPU</span>
+    <span class="chip">Windows 11 · без Docker</span>
+    <span class="chip">giga-agent 0.1.9 (ветка main)</span>
+  </div>
+</header>
+
+<section>
+  <h2>Итог</h2>
+  <p class="prose">Все три агента дали результат, совпадающий с эталоном преподавателя (<code>dpo-kit/instructor/expected_results.md</code>). Агент закупок справился с первого раза. Двум другим понадобилась одна правка инструкций — это хороший материал для занятия о том, как пишутся инструкции.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Агент</th><th>Первый запуск</th><th>После правки инструкций</th><th>Время</th></tr></thead>
+      <tbody>
+        <tr><td>Проверка закупок</td><td><span class="pill ok">4 из 4</span> расхождений</td><td>правка не понадобилась</td><td class="num">около минуты</td></tr>
+        <tr><td>Контроль поручений</td><td><span class="pill mid">по сути верно</span> но просрочки не выделены, сроки придуманы, петля в конце</td><td><span class="pill ok">3 из 3</span> поручений, просрочки отмечены</td><td class="num">28 с</td></tr>
+        <tr><td>Разбор обращений</td><td><span class="pill no">2 из 5</span> инцидентов, классификация скриптом по словам</td><td><span class="pill ok">5 из 5</span> инцидентов, 18 из 18 ID</td><td class="num">54 с</td></tr>
+        <tr><td>Поиск по базе знаний (RAG)</td><td><span class="pill ok">верно</span> с цитатами из двух документов</td><td>—</td><td class="num">8 с</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Как в GigaAgent устроен агент</h2>
+  <p class="prose">Отдельной сущности «агент» нет — её роль играет <b>проект</b>. У проекта есть название, описание, инструкции, которые добавляются к системному промпту во всех его чатах, и собственные знания (PDF, DOCX, TXT, MD, HTML). Каждый новый чат в проекте — это запуск агента. Инструменты (MCP-серверы, песочница для кода, база знаний) подключаются в настройках один раз и доступны всем агентам.</p>
+  <div class="shots">
+    <figure><img src="img/01-agents-sidebar.jpg" alt="Боковая панель GigaAgent со списком проектов: Агент: разбор обращений, Агент: контроль поручений, Агент: проверка закупок"><figcaption>Три агента — это три проекта в боковой панели.</figcaption></figure>
+    <figure><img src="img/02-agent-settings.jpg" alt="Страница проекта «Агент: контроль поручений» с полями название, описание и инструкции для агента"><figcaption>Страница агента: название, описание, инструкции, знания проекта и список его чатов.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Три агента на учебных данных</h2>
+
+  <div class="agent">
+    <div class="text">
+      <h3>Проверка закупок</h3>
+      <dl class="kv">
+        <dt>Вход</dt><dd>ТЗ, смета, контракт, график, порядок приёмки</dd>
+        <dt>Выход</dt><dd><code>01_procurement/output/report.md</code></dd>
+      </dl>
+      <p>Нашёл все расхождения эталона: монтаж 100 против 80 в смете, гарантия 36 против 12 месяцев, поставка 30.11 против 10.12, приёмка 80 светильников из 100. Сам пересчитал недостающую сумму сметы. Входные файлы не тронул.</p>
+    </div>
+    <figure><img src="img/03-procurement-result.jpg" alt="Ответ агента закупок: таблица выявленных расхождений по параметрам ТЗ, контракт, график, приёмка, смета"><figcaption>Таблица расхождений в ответе агента.</figcaption></figure>
+  </div>
+
+  <div class="agent">
+    <div class="text">
+      <h3>Контроль поручений</h3>
+      <dl class="kv">
+        <dt>Вход</dt><dd>протокол, отчёты исполнителей, реестр доказательств</dd>
+        <dt>Выход</dt><dd><code>status_report.md</code>, <code>questions.md</code></dd>
+      </dl>
+      <p>Разделяет заявления исполнителей и документы: П-01 не выполнено и просрочено, П-02 подтверждено 40 из 60 знаков и просрочено, П-03 подтверждено 10 из 12 актов, срок ещё не истёк. К каждому поручению подготовлены вопросы исполнителю.</p>
+      <div class="fix">В первой версии агент не выделил просрочки отдельно и придумал новые сроки сдачи. Помогли две фразы в инструкции: «для каждого поручения явно укажи, просрочено ли оно» и «не придумывай новые сроки, ФИО и требования».</div>
+    </div>
+    <figure><img src="img/04-assignments-result.jpg" alt="Ответ агента поручений: сохранены status_report.md и questions.md, агент работал 28 секунд"><figcaption>Агент сохранил оба файла за 28 секунд.</figcaption></figure>
+  </div>
+
+  <div class="agent">
+    <div class="text">
+      <h3>Разбор обращений</h3>
+      <dl class="kv">
+        <dt>Вход</dt><dd>18 обращений, справочник объектов, правила</dd>
+        <dt>Выход</dt><dd><code>incidents.md</code>, <code>manual_review.md</code></dd>
+      </dl>
+      <p>Пять инцидентов: фонари на Сосновой, 12 и 14 (разные объекты), переход у школы № 7, утечка на Речной, 5, остановка Центральная. На ручную проверку ушли A018 (нет номера дома) и A013 (адреса нет в справочнике).</p>
+      <div class="fix">В первой версии агент написал на pandas классификатор по ключевым словам: «лужа» и «течь» не связались с утечкой, и 12 из 18 обращений ушли на ручную проверку. Помогло одно правило: «классифицируй по смыслу текста, а не скриптом по ключевым словам».</div>
+    </div>
+    <div class="stack">
+      <figure><img src="img/05-appeals-steps.jpg" alt="Шаги агента: прочитал appeals.csv, objects.csv, context.md, выполнил код в песочнице, рассуждения о группировке"><figcaption>Шаги агента видны в чате: чтение файлов, код в песочнице, рассуждения.</figcaption></figure>
+      <figure><img src="img/06-appeals-result.jpg" alt="Итог агента обращений: 5 инцидентов и 2 обращения на ручную проверку"><figcaption>Итог: 5 инцидентов и 2 обращения на ручную проверку. В сводке в чате у LIGHT-01 опечатка в номере дома, в файле номер верный.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>База знаний на локальных эмбеддингах</h2>
+  <p class="prose">Эмбеддинги GigaChat в бесплатный лимит не входят: API отвечает <code>402 Payment Required</code>. Поэтому векторы считает открытая модель Сбера <code>ai-forever/ru-en-RoSBERTa</code> на обычном процессоре. GigaAgent отправляет вместо текста номера токенов, и локальные серверы такие запросы не понимают. Прослойка LiteLLM переводит их обратно в текст, и править код GigaAgent для этого не нужно. Векторы, полученные через эту цепочку, совпадают с прямыми (косинус 1,0).</p>
+  <div class="chain" aria-label="Цепочка запроса эмбеддингов">
+    <span class="node">GigaAgent</span><span class="arrow">→</span>
+    <span class="node">LiteLLM :8104</span><span class="arrow">→</span>
+    <span class="node">Infinity :8103</span><span class="arrow">→</span>
+    <span class="node">ru-en-RoSBERTa (CPU)</span>
+  </div>
+  <div class="shots">
+    <figure><img src="img/07-embeddings.jpg" alt="Настройки Embeddings: активна модель ru-en-RoSBERTa (локально, CPU)"><figcaption>Модель подключена в настройках как обычный OpenAI-совместимый сервис.</figcaption></figure>
+    <figure><img src="img/08-rag-answer.jpg" alt="Ответ агента по базе знаний: гарантия 12 месяцев в контракте и 36 месяцев в ТЗ, с цитатами"><figcaption>Агент сам находит нужное в «Документах» и отвечает с цитатами.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <h2>Что работает на машине</h2>
+  <p class="prose">Всё ставится через <code>uv</code> и <code>npx</code>, каждая служба — отдельный процесс на <code>127.0.0.1</code>. MCP-серверы подключены по streamable HTTP.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Служба</th><th>Порт</th><th>Назначение</th><th>Где работает</th></tr></thead>
+      <tbody>
+        <tr><td>GigaAgent (веб-интерфейс)</td><td class="num">9090</td><td>агенты, чаты, настройки</td><td>локально</td></tr>
+        <tr><td>MCP dpo_files</td><td class="num">8101</td><td>чтение и запись файлов курса</td><td>локально</td></tr>
+        <tr><td>MCP web_fetch</td><td class="num">8102</td><td>загрузка веб-страниц</td><td>локально</td></tr>
+        <tr><td>Infinity</td><td class="num">8103</td><td>эмбеддинги RoSBERTa на CPU</td><td>локально</td></tr>
+        <tr><td>LiteLLM</td><td class="num">8104</td><td>совместимость эмбеддингов с GigaAgent</td><td>локально</td></tr>
+        <tr><td>Песочница local_jupyter</td><td class="num">—</td><td>Python и pandas для агента</td><td>локально, без изоляции</td></tr>
+        <tr><td>GigaChat-3-Ultra</td><td class="num">—</td><td>языковая модель</td><td>серверы Сбера, РФ</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Что пришлось обойти</h2>
+  <ul class="prose">
+    <li><b>Сервер падал при первом запуске Python.</b> На Windows GigaAgent проверяет, жив ли процесс Jupyter, вызовом <code>os.kill(pid, 0)</code>, а это рассылает Ctrl+C всем процессам консоли. Решение: сервер запускается скриптом <code>run-giga-agent.py</code> в отдельной группе процессов.</li>
+    <li><b>Агент сохранял файлы не туда.</b> Встроенный <code>write_file</code> может писать только в рабочую папку песочницы, а в интерфейсе запись всё равно отмечается галочкой. Решение: добавить папку курса в «Write Dirs» провайдера песочницы.</li>
+    <li><b>Агент зацикливался.</b> Упоминание имён инструментов в инструкции (например, «проверь через get_file_info») сбивает модель. Срабатывает встроенная защита от петель, но результат теряется.</li>
+    <li><b>CLI-режим непригоден для курса.</b> В нём не видны MCP-серверы, а на Windows не работает Python. Всё проверено через веб-интерфейс.</li>
+    <li><b>Код агента выполняется без изоляции.</b> Изоляция песочницы есть только на macOS и Linux. Для синтетических учебных данных это приемлемо.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Правила инструкций, проверенные на практике</h2>
+  <ol class="steps prose">
+    <li>Указывайте абсолютные пути ко входным файлам и к файлам результата.</li>
+    <li>Описывайте, что сделать, а не каким инструментом: имена инструментов модель путает.</li>
+    <li>Требуйте явных пометок, которые потом проверите: «просрочено / срок не истёк».</li>
+    <li>Запрещайте домысливать: «используй только данные из файлов, не придумывай сроки и ФИО».</li>
+    <li>Для смысловой классификации пишите «по смыслу, а не скриптом».</li>
+    <li>Проверяйте файлы и шаги агента, а не его итоговое сообщение: «файлы сохранены» бывает неправдой.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Можно ли сделать установочный бандл</h2>
+  <div class="answer yes">
+    <div class="verdict">Да, без правки кода GigaAgent</div>
+    <p>Всё, что я настраивал руками в интерфейсе, есть и в REST API GigaAgent: подключения, эмбеддинги, песочница, проекты с инструкциями, папки базы знаний. Значит, настройку можно описать скриптом. На занятии останется показать, как вписываются инструкции и как работают агенты.</p>
+    <p><b>Что войдёт в бандл:</b></p>
+    <ul>
+      <li><code>pyproject.toml</code> с GigaAgent, закреплённым на проверенной версии, и пакетами для песочницы;</li>
+      <li>скрипт запуска служб (MCP, Infinity, LiteLLM) и запуска сервера с обходом ошибки Windows;</li>
+      <li>скрипт начальной настройки через API: подключение эмбеддингов, песочница с Write Dirs, три агента-проекта с инструкциями, папка базы знаний с документами;</li>
+      <li>учебные данные <code>dpo-kit</code> и эталонные ответы для преподавателя;</li>
+      <li>короткая инструкция для слушателя: вставить свой ключ GigaChat в <code>.env</code> и выполнить одну команду.</li>
+    </ul>
+    <p><b>Что учесть:</b> при первом запуске скачивается около 2 ГБ (PyTorch и модель), это лучше заранее положить в бандл или на локальное зеркало. Каждому слушателю нужен свой ключ GigaChat с квотой на GigaChat-3-Ultra. Бандл стоит проверить на чистой машине Windows, а при необходимости и на macOS или Linux.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Является ли GigaAgent официальным продуктом Сбера</h2>
+  <div class="answer">
+    <p>Это открытый проект команды Сбера, а не коммерческий продукт с поддержкой. Репозиторий опубликован в GitHub-организации <code>ai-forever</code> (открытые проекты команды AI Сбера) под лицензией MIT. В README он описан как часть открытого набора инструментов GigaChain, документация лежит на <code>agent.giga.chat</code>.</p>
+    <p>Для курса это значит: инструмент свободно используется и меняется, но гарантий стабильности нет. Проект быстро развивается (ветка <code>dev</code> отстаёт от <code>main</code> на 539 коммитов), поэтому в бандле версию нужно закрепить. Если нужен статус «официально поддерживаемого решения» для госзаказчика, это стоит уточнить у команды GigaChat напрямую.</p>
+  </div>
+</section>
+
+</div>

@@ -1,0 +1,6 @@
+Используя MCP local_dpo_files, прочитай все документы
+из папки C:\Projects\Studies\giga-agent-demo\dpo-kit\data\01_procurement\input.
+Проверь комплект закупочных документов.
+Составь таблицу расхождений с исходными формулировками,
+объясни возможные последствия и предложи исправления.
+Сохрани Markdown-отчёт по пути C:\Projects\Studies\giga-agent-demo\dpo-kit\data\01_procurement\output/report.md.

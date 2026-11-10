@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Secrets and local giga-agent state (DB holds the GigaChat key).
+# Only the MCP server list is versioned.
+.env
+.giga_agent/*
+!.giga_agent/mcp.json
+.giga_agent.backup-*/
+.langgraph_api/
+
+# IDE
+.idea/

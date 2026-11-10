@@ -1,0 +1,19 @@
+{
+  "llm": {
+    "connector": { "__type": "gigachat" },
+    "__type": "gigachat",
+    "model_id": "GigaChat-3-Ultra"
+  },
+  "embedding": {
+    "connector": {
+      "__type": "openai",
+      "base_url": "http://localhost:11434/v1",
+      "api_key": "ollama-local"
+    },
+    "__type": "openai",
+    "model_id": "bge-m3",
+    "vector_size": 1024,
+    "extra": { "check_embedding_ctx_length": false }
+  },
+  "sandbox": "local_jupyter"
+}

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "dpo_files": {
+      "url": "http://127.0.0.1:8101/mcp"
+    },
+    "web_fetch": {
+      "url": "http://127.0.0.1:8102/mcp"
+    }
+  }
+}
