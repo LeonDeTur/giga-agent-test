@@ -17,5 +17,18 @@ wheels/
 .giga_agent.backup-*/
 .langgraph_api/
 
+# Bundle build/test byproducts (the zip is rebuilt from bundle/dpo-giga-agent)
+bundle/.uv-cache/
+bundle/.wheel-stage/
+bundle/verification/
+bundle/*.zip
+bundle/acl-reset.txt
+bundle/zip-contents.txt
+bundle/STATIC-VERIFICATION.md
+bundle/dpo-giga-agent/tools/
+bundle/dpo-giga-agent/.downloads/
+# The bundle ships the tested giga-agent wheel (overrides "wheels/" above).
+!bundle/dpo-giga-agent/wheels/
+
 # IDE
 .idea/

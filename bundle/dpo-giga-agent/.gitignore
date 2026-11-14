@@ -1,0 +1,12 @@
+.env
+.venv/
+.giga_agent/
+__pycache__/
+*.pyc
+*.log
+logs/
+.cache/
+data/*/output/*
+!data/*/output/.gitkeep
+litellm.yaml
+
