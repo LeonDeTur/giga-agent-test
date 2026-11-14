@@ -1,4 +1,24 @@
-﻿# Pinned versions; hashes are fetched from the official release host.
+﻿function Assert-CourseEnvironment {
+    if ($PSVersionTable.PSVersion -lt [version]'5.1') {
+        throw 'Требуется Windows 10 или 11 с Windows PowerShell 5.1 или новее.'
+    }
+    if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT -or [Environment]::OSVersion.Version.Major -lt 10) {
+        throw 'Требуется Windows 10 или 11.'
+    }
+    if (![Environment]::Is64BitOperatingSystem) {
+        throw 'Требуется 64-разрядная Windows.'
+    }
+}
+Assert-CourseEnvironment
+function Get-CourseSHA256([string]$Path) {
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $stream = [IO.File]::OpenRead($Path)
+        try { return [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '') }
+        finally { $stream.Dispose() }
+    } finally { $sha.Dispose() }
+}
+# Pinned versions; hashes are fetched from the official release host.
 $UvVersion = '0.9.5'
 $NodeVersion = '22.14.0'
 function Initialize-Tools {
@@ -16,8 +36,8 @@ function Initialize-Tools {
         if (Test-Path "$PSScriptRoot\tools\$kind\$exe") { continue }
         if ($env:UV_OFFLINE -eq '1') { throw 'В автономном архиве отсутствуют инструменты.' }
         $stage = Join-Path $PSScriptRoot ('.downloads\'+[guid]::NewGuid())
-        New-Item -ItemType Directory -Path $stage -Force | Out-Null
         try {
+            New-Item -ItemType Directory -Path $stage -Force | Out-Null
             if ($kind -eq 'uv') {
                 $asset='uv-x86_64-pc-windows-msvc.zip'
                 $url="https://github.com/astral-sh/uv/releases/download/$UvVersion/$asset"
@@ -28,20 +48,44 @@ function Initialize-Tools {
                 $checks="https://nodejs.org/dist/v$NodeVersion/SHASUMS256.txt"
             }
             Write-Host "Загрузка $kind; версия $(if ($kind -eq 'uv') {$UvVersion} else {$NodeVersion})"
-            Invoke-WebRequest -UseBasicParsing $url -OutFile "$stage\$asset"
-            Invoke-WebRequest -UseBasicParsing $checks -OutFile "$stage\checks.txt"
+            [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+            $savedProgressPreference = $ProgressPreference
+            try {
+                $ProgressPreference = 'SilentlyContinue'
+                Invoke-WebRequest -UseBasicParsing $url -OutFile "$stage\$asset"
+                Invoke-WebRequest -UseBasicParsing $checks -OutFile "$stage\checks.txt"
+            } catch {
+                $cause = $_.Exception
+                $networkFailure = $false
+                while ($null -ne $cause) {
+                    if ($cause -is [Net.WebException] -or $cause.GetType().FullName -in @('System.Net.Http.HttpRequestException', 'Microsoft.PowerShell.Commands.HttpResponseException')) {
+                        $networkFailure = $true
+                        break
+                    }
+                    $cause = $cause.InnerException
+                }
+                if ($networkFailure) { throw "Ошибка загрузки $kind. Проверьте интернет. $($_.Exception.Message)" }
+                throw
+            } finally { $ProgressPreference = $savedProgressPreference }
             $lines=Get-Content "$stage\checks.txt"
             $line= if ($kind -eq 'uv') {$lines | Select-Object -First 1} else {$lines | Where-Object { $_ -match ('\s+\*?'+[regex]::Escape($asset)+'$') } | Select-Object -First 1}
             if (!$line -or $line -notmatch '^([0-9a-fA-F]{64})(\s|$)') { throw 'Некорректный официальный файл SHA256.' }
             $expected=$Matches[1]
-            $actual=(Get-FileHash "$stage\$asset" -Algorithm SHA256).Hash
+            $actual=Get-CourseSHA256 "$stage\$asset"
             if ($actual -ne $expected) { throw 'SHA256 не совпадает. Установка прервана.' }
             Write-Host "SHA256 проверен: $actual"
             Expand-Archive -LiteralPath "$stage\$asset" -DestinationPath "$stage\extract"
             $source= if ($kind -eq 'uv') {"$stage\extract"} else {"$stage\extract\node-v$NodeVersion-win-x64"}
             New-Item -ItemType Directory "$PSScriptRoot\tools\$kind" -Force | Out-Null
             Copy-Item "$source\*" "$PSScriptRoot\tools\$kind" -Recurse -Force
-        } catch { throw "Ошибка загрузки $kind. Проверьте интернет. $($_.Exception.Message)" }
+        } catch { throw "Не удалось подготовить $($kind): $($_.Exception.Message)" }
+        finally {
+            Remove-Item -LiteralPath $stage -Recurse -Force -ErrorAction SilentlyContinue
+            $downloads = Join-Path $PSScriptRoot '.downloads'
+            if ((Test-Path -LiteralPath $downloads) -and !(Get-ChildItem -LiteralPath $downloads -Force | Select-Object -First 1)) {
+                Remove-Item -LiteralPath $downloads -Force -ErrorAction SilentlyContinue
+            }
+        }
     }
 }
 function Invoke-Course([string]$Command) {

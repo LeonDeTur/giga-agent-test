@@ -9,4 +9,5 @@ logs/
 data/*/output/*
 !data/*/output/.gitkeep
 litellm.yaml
-
+.downloads/
+tools/

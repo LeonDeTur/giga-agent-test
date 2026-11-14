@@ -1,12 +1,12 @@
 ﻿param([switch]$Yes, [switch]$Shortcuts)
 $ErrorActionPreference='Stop'
 try {
+    . "$PSScriptRoot\bootstrap.ps1"
     if ($PSScriptRoot.Length -gt 80) { throw 'Путь к папке слишком длинный для Windows. Переместите комплект в C:\DPO. Кириллица и пробелы допустимы.' }
     if ((Get-Item $PSScriptRoot).PSDrive.Free -lt 5GB) { throw 'Для установки требуется около 5 ГБ свободного места.' }
     Set-Location -LiteralPath $PSScriptRoot
     New-Item -ItemType Directory '.giga_agent\run' -Force | Out-Null
     Start-Transcript -Path '.giga_agent\run\install.log' -Append | Out-Null
-    . "$PSScriptRoot\bootstrap.ps1"
     Write-Host 'Подготовка инструментов. Первый запуск скачивает около 2 ГБ, 10–20 минут.'
     Initialize-Tools
     Write-Host 'Проверка ключа GigaChat.'
