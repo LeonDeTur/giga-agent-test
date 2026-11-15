@@ -27,5 +27,5 @@ echo Output: signed.
 :checksum
 set "PSModulePath="
 set "DPO_SETUP_EXE=%~dp0..\dist\dpo-giga-agent-setup.exe"
-"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -Command "try { $ErrorActionPreference = 'Stop'; $stream = [IO.File]::OpenRead($env:DPO_SETUP_EXE); $sha = [Security.Cryptography.SHA256]::Create(); try { $hash = [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '').ToLowerInvariant() } finally { $stream.Dispose(); $sha.Dispose() }; [IO.File]::WriteAllText($env:DPO_SETUP_EXE + '.sha256', $hash + '  dpo-giga-agent-setup.exe' + [Environment]::NewLine, [Text.Encoding]::ASCII); Write-Output $hash; exit 0 } catch { [Console]::Error.WriteLine($_.Exception.Message); exit 1 }"
+"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -NonInteractive -Command "try { $ErrorActionPreference = 'Stop'; $stream = [IO.File]::OpenRead($env:DPO_SETUP_EXE); $sha = [Security.Cryptography.SHA256]::Create(); try { $hash = [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '').ToLowerInvariant() } finally { $stream.Dispose(); $sha.Dispose() }; [IO.File]::WriteAllText($env:DPO_SETUP_EXE + '.sha256', $hash + '  dpo-giga-agent-setup.exe' + [char]10, [Text.Encoding]::ASCII); Write-Output $hash; exit 0 } catch { [Console]::Error.WriteLine($_.Exception.Message); exit 1 }"
 exit /b %errorlevel%
