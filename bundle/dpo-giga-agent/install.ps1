@@ -1,4 +1,4 @@
-﻿param([switch]$Yes, [switch]$Shortcuts)
+﻿param([switch]$Yes, [switch]$Shortcuts, [switch]$NoShortcuts)
 $ErrorActionPreference='Stop'
 try {
     . "$PSScriptRoot\bootstrap.ps1"
@@ -24,8 +24,10 @@ try {
     Write-Host 'Установка Python, зависимостей, запуск пяти служб, настройка трёх проектов и проверка.'
     Invoke-Course 'up'
     Invoke-Course 'open-ui'
-    $create=$Shortcuts.IsPresent
-    if (!$Yes -and !$create) { $create=(Read-Host 'Создать ярлыки на рабочем столе и в меню Пуск? [Д/н]') -notmatch '^[нn]' }
-    if ($create) { New-CourseShortcuts @([Environment]::GetFolderPath('Desktop'),(Join-Path ([Environment]::GetFolderPath('Programs')) 'ДПО агенты')) }
+    if (!$NoShortcuts) {
+        $create=$Shortcuts.IsPresent
+        if (!$Yes -and !$create) { $create=(Read-Host 'Создать ярлыки на рабочем столе и в меню Пуск? [Д/н]') -notmatch '^[нn]' }
+        if ($create) { New-CourseShortcuts @([Environment]::GetFolderPath('Desktop'),(Join-Path ([Environment]::GetFolderPath('Programs')) 'ДПО агенты')) }
+    }
 } catch { Write-Host "Ошибка: $($_.Exception.Message)"; exit 1 }
 finally { try { Stop-Transcript | Out-Null } catch {} }
