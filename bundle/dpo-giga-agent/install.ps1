@@ -7,7 +7,7 @@ try {
     Set-Location -LiteralPath $PSScriptRoot
     New-Item -ItemType Directory '.giga_agent\run' -Force | Out-Null
     Start-Transcript -Path '.giga_agent\run\install.log' -Append | Out-Null
-    Write-Host 'Подготовка инструментов. Первый запуск скачивает около 2 ГБ, 10–20 минут.'
+    Write-Host 'Подготовка инструментов. Первый запуск скачивает около 5,5 ГБ, обычно 10–20 минут.'
     Initialize-Tools
     Write-Host 'Проверка ключа GigaChat.'
     while ($true) {
