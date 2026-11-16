@@ -1,6 +1,6 @@
 [project]
 name = "dpo-giga-agent-course"
-version = "1.0.0"
+version = "1.0.1"
 description = "Учебный комплект giga-agent для ДПО"
 requires-python = ">=3.12"
 dependencies = ["giga-agent[jupyter]==0.1.9", "httpx==0.28.1", "python-dotenv==1.2.2", "psutil>=7.0,<8"]
