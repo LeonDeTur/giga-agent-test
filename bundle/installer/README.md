@@ -29,3 +29,5 @@ OV/EV или сервис подписи; самоподписанный сер�
 ~~~cmd
 gh release create v1.0.0 bundle/dist/dpo-giga-agent-setup.exe bundle/dist/dpo-giga-agent-setup.exe.sha256
 ~~~
+
+Полная инструкция: [Установка и сборка комплекта](../docs/01_install_and_build.md).
